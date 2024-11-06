@@ -1,0 +1,3 @@
+// app/views/posts/dislike.js.erb
+var reactionCount = document.getElementById("reaction-count-<%= @post.id %>");
+reactionCount.innerHTML = "<%= @post.reactions.where(reaction_type: 'dislike').count %> No me gusta";

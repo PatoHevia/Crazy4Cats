@@ -1,0 +1,3 @@
+// app/views/posts/like.js.erb
+var reactionCount = document.getElementById("reaction-count-<%= @post.id %>");
+reactionCount.innerHTML = "<%= @post.reactions.where(reaction_type: 'like').count %> Me gusta";

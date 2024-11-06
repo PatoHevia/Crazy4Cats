@@ -1,0 +1,84 @@
+<div class="container my-4">
+  <h1 class="text-center mb-5">🐾 Publicaciones de Crazy4Cats 🐾</h1>
+
+  <!-- Botón para crear una nueva publicación (visible solo si el usuario ha iniciado sesión) -->
+  <div class="text-center my-4">
+    <% if user_signed_in? %>
+      <%= link_to 'Crear Publicación', new_post_path, class: "btn btn-primary" %>
+    <% end %>
+  </div>
+
+  <% @posts.each do |post| %>
+    <div class="card mb-5 shadow-lg">
+      <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <h3 class="card-title m-0"><%= post.title %></h3>
+        <small class="text-end">Publicado por <strong><%= post.user.username %></strong></small>
+        <% if post.user == current_user %> <!-- Verifica que el usuario sea el autor de la publicación -->
+          <%= link_to 'Borrar', post_path(post), method: :delete, data: { confirm: '¿Estás seguro de que deseas borrar esta publicación?' }, class: "btn btn-danger btn-sm" %>
+        <% end %>
+      </div>
+
+      <div class="card-body">
+        <p class="card-text"><%= post.content %></p>
+
+        <!-- Reacciones -->
+        <div id="reaction-count-<%= post.id %>" class="d-flex align-items-center mb-3">
+          <span class="me-3 text-success">
+            <i class="bi bi-hand-thumbs-up"></i>
+            <strong><%= post.reactions.where(reaction_type: 'like').count %></strong> Me gusta
+          </span>
+          <span class="me-3 text-danger">
+            <i class="bi bi-hand-thumbs-down"></i>
+            <strong><%= post.reactions.where(reaction_type: 'dislike').count %></strong> No me gusta
+          </span>
+        </div>
+
+        <div class="d-flex mb-4">
+  <%= button_to 'Me gusta', like_post_path(post), method: :post, remote: true, class: "btn btn-outline-success btn-sm me-2" %>
+  <%= button_to 'No me gusta', dislike_post_path(post), method: :post, remote: true, class: "btn btn-outline-danger btn-sm" %>
+</div>
+
+
+        <hr>
+
+        <!-- Sección de comentarios -->
+        <h5 class="card-subtitle mb-3">Comentarios</h5>
+        <% if post.comments.any? %>
+          <% post.comments.each do |comment| %>
+            <div class="border rounded p-3 mb-2 bg-light">
+              <p class="mb-1">
+                <% if comment.anonymous? %>
+                  <strong>Anónimo:</strong>
+                <% else %>
+                  <strong><%= comment.user.username %></strong>:
+                <% end %>
+                <%= comment.content %>
+              </p>
+            </div>
+          <% end %>
+        <% else %>
+          <p class="text-muted">No hay comentarios aún. ¡Sé el primero en comentar!</p>
+        <% end %>
+
+        <!-- Formulario para agregar un nuevo comentario -->
+        <h6 class="mt-4">Agregar un comentario</h6>
+        <%= form_with model: [post, Comment.new], local: true, class: "mt-2" do |form| %>
+          <div class="mb-3">
+            <%= form.text_area :content, class: "form-control", placeholder: "Escribe tu comentario aquí...", rows: 3 %>
+          </div>
+
+          <div class="form-check mb-2">
+            <%= form.check_box :anonymous, class: "form-check-input" %>
+            <%= form.label :anonymous, "Comentar como anónimo", class: "form-check-label" %>
+          </div>
+
+          <%= form.submit "Enviar comentario", class: "btn btn-primary btn-sm" %>
+        <% end %>
+      </div>
+
+      <div class="card-footer text-muted text-center">
+        Publicado el <%= post.created_at.strftime("%d/%m/%Y a las %H:%M") %>
+      </div>
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,9 @@
+// app/views/posts/update_reaction.js.erb
+const reactionCountElement = document.getElementById("reaction-count-<%= @post.id %>");
+const likeCount = <%= @post.reactions.where(reaction_type: 'like').count %>;
+const dislikeCount = <%= @post.reactions.where(reaction_type: 'dislike').count %>;
+
+reactionCountElement.innerHTML = `
+  <span class="me-3 text-success"><i class="bi bi-hand-thumbs-up"></i> <strong>${likeCount}</strong> Me gusta</span>
+  <span class="me-3 text-danger"><i class="bi bi-hand-thumbs-down"></i> <strong>${dislikeCount}</strong> No me gusta</span>
+`;

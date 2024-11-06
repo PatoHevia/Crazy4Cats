@@ -1,0 +1,41 @@
+<div id="reaction-count-<%= @post.id %>">
+  <%= @post.reactions.count %> Reactions
+</div>
+
+<button class="btn btn-success" data-remote="true" data-method="post" href="<%= like_post_path(@post) %>">Me gusta</button>
+<button class="btn btn-danger" data-remote="true" data-method="post" href="<%= dislike_post_path(@post) %>">No me gusta</button>
+
+<hr>
+
+<h2>Comentarios</h2>
+
+<% @post.comments.each do |comment| %>
+  <div class="comment mt-3">
+    <p>
+      <% if comment.anonymous? %>
+        <strong>Anónimo:</strong>
+      <% else %>
+        <strong><%= comment.user.username %>:</strong>
+      <% end %>
+      <%= comment.content %>
+    </p>
+  </div>
+<% end %>
+
+<hr>
+
+<h3>Agregar un comentario</h3>
+
+<%= form_with model: [@post, Comment.new], local: true do |form| %>
+  <div class="form-group">
+    <%= form.label :content, "Comentario" %>
+    <%= form.text_area :content, class: "form-control" %>
+  </div>
+
+  <div class="form-check mt-2">
+    <%= form.check_box :anonymous, class: "form-check-input" %>
+    <%= form.label :anonymous, "Comentar como anónimo", class: "form-check-label" %>
+  </div>
+
+  <%= form.submit "Enviar comentario", class: "btn btn-primary mt-3" %>
+<% end %>
